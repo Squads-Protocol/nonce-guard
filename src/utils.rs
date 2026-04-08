@@ -1,5 +1,4 @@
 use core::{
-    fmt,
     marker::PhantomData,
     mem::size_of,
     ops::Deref,
@@ -7,75 +6,55 @@ use core::{
 use std::io::{Error, ErrorKind, Read, Write};
 
 use borsh::{BorshDeserialize, BorshSerialize};
-use smallvec::SmallVec as InlineSmallVec;
 
-pub struct SmallVec<L, T, const N: usize> {
-    inner: InlineSmallVec<[T; N]>,
-    _len: PhantomData<L>,
-}
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct SmallVec<L, T>(Vec<T>, PhantomData<L>);
 
-impl<L, T, const N: usize> SmallVec<L, T, N> {
-    pub fn try_from_vec(values: Vec<T>) -> Result<Self, Vec<T>> {
-        if values.len() > N {
-            return Err(values);
-        }
+impl<L, T> SmallVec<L, T> {
+    pub fn from_vec(values: Vec<T>) -> Self {
+        Self(values, PhantomData)
+    }
 
-        Ok(Self {
-            inner: InlineSmallVec::from_vec(values),
-            _len: PhantomData,
-        })
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     pub fn as_slice(&self) -> &[T] {
-        self.inner.as_slice()
+        self.0.as_slice()
     }
 }
 
-impl<L, T, const N: usize> Default for SmallVec<L, T, N> {
-    fn default() -> Self {
-        Self {
-            inner: InlineSmallVec::new(),
-            _len: PhantomData,
-        }
+impl<L, T> From<SmallVec<L, T>> for Vec<T> {
+    fn from(val: SmallVec<L, T>) -> Self {
+        val.0
     }
 }
 
-impl<L, T, const N: usize> Clone for SmallVec<L, T, N>
-where
-    T: Clone,
-{
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-            _len: PhantomData,
-        }
+impl<L, T> From<Vec<T>> for SmallVec<L, T> {
+    fn from(val: Vec<T>) -> Self {
+        Self(val, PhantomData)
     }
 }
 
-impl<L, T, const N: usize> fmt::Debug for SmallVec<L, T, N>
-where
-    T: fmt::Debug,
-{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.inner.fmt(f)
-    }
-}
-
-impl<L, T, const N: usize> Deref for SmallVec<L, T, N> {
-    type Target = [T];
+impl<L, T> Deref for SmallVec<L, T> {
+    type Target = Vec<T>;
 
     fn deref(&self) -> &Self::Target {
-        self.as_slice()
+        &self.0
     }
 }
 
-impl<L, T, const N: usize> BorshSerialize for SmallVec<L, T, N>
+impl<L, T> BorshSerialize for SmallVec<L, T>
 where
     L: BorshSerialize + TryFrom<usize>,
     T: BorshSerialize,
 {
     fn serialize<W: Write>(&self, writer: &mut W) -> std::io::Result<()> {
-        let len = L::try_from(self.inner.len()).map_err(|_| {
+        let len = L::try_from(self.0.len()).map_err(|_| {
             Error::new(
                 ErrorKind::InvalidInput,
                 "small vec length does not fit serialized length type",
@@ -84,7 +63,7 @@ where
 
         len.serialize(writer)?;
 
-        for item in self.inner.iter() {
+        for item in self.0.iter() {
             item.serialize(writer)?;
         }
 
@@ -92,7 +71,7 @@ where
     }
 }
 
-impl<L, T, const N: usize> BorshDeserialize for SmallVec<L, T, N>
+impl<L, T> BorshDeserialize for SmallVec<L, T>
 where
     L: BorshDeserialize + TryInto<usize>,
     T: BorshDeserialize,
@@ -106,22 +85,12 @@ where
             )
         })?;
 
-        if len > N {
-            return Err(Error::new(
-                ErrorKind::InvalidData,
-                "small vec length exceeds inline capacity",
-            ));
-        }
-
-        let mut inner = InlineSmallVec::<[T; N]>::new();
+        let mut inner = Vec::with_capacity(len);
         for _ in 0..len {
             inner.push(T::deserialize_reader(reader)?);
         }
 
-        Ok(Self {
-            inner,
-            _len: PhantomData,
-        })
+        Ok(Self(inner, PhantomData))
     }
 }
 

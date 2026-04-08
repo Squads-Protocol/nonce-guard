@@ -893,7 +893,6 @@ dependencies = [
  "litesvm",
  "p-never-nonce",
  "pinocchio",
- "smallvec",
  "solana-account",
  "solana-address",
  "solana-instruction",

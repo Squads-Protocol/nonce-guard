@@ -119,13 +119,12 @@ fn rejects_system_transfer_when_transaction_uses_durable_nonce() {
 
 fn guarded_transfer_instruction(owner: Pubkey, guarded_pda: Pubkey, recipient: Pubkey) -> Instruction {
     let execute_args = ExecuteGuardedInstructionArgs {
-        instructions: SmallVec::try_from_vec(vec![CompiledInstruction {
+        instructions: SmallVec::from_vec(vec![CompiledInstruction {
             program_id_index: 2,
             account_indices: vec![0, 1],
             data: solana_system_interface::instruction::transfer(&guarded_pda, &recipient, TRANSFER_LAMPORTS)
                 .data,
-        }])
-        .unwrap(),
+        }]),
     };
 
     Instruction {

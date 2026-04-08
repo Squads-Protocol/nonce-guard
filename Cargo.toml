@@ -7,13 +7,12 @@ edition = "2024"
 program-id = "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN"
 
 [lib]
-crate-type = ["cdylib", "lib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 pinocchio = { version = "0.10.2", features = ["cpi"] }
 p-never-nonce = "0.2.0"
 borsh = { version = "1.5.7", features = ["derive"] }
-smallvec = { version = "1.15.1", features = ["const_generics"] }
 solana-address = { version = "2.5.0", features = ["curve25519", "decode"] }
 
 [dev-dependencies]
