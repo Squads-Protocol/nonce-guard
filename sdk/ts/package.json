@@ -1,0 +1,22 @@
+{
+  "name": "@squads-protocol/nonce-guard-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for the Nonce Guard program",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@solana/kit": "^6.4.0",
+    "@solana/program-client-core": "^6.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
