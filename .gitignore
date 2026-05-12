@@ -17,3 +17,9 @@ target/
 #.idea/
 
 .DS_Store
+
+# Node
+node_modules/
+
+# SDK build artifacts
+sdk/ts/dist/
