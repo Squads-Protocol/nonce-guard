@@ -18,3 +18,9 @@ target/
 
 .DS_Store
 .secrets/
+
+# Node
+node_modules/
+
+# SDK build artifacts
+sdk/ts/dist/
