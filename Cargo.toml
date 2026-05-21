@@ -1,10 +1,10 @@
 [package]
-name = "external-signature-program"
+name = "nonce-guard-program"
 version = "0.1.0"
 edition = "2024"
 
 [package.metadata.solana]
-program-id = "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN"
+program-id = "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
