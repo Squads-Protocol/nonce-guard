@@ -886,29 +886,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "external-signature-program"
-version = "0.1.0"
-dependencies = [
- "borsh 1.5.7",
- "litesvm",
- "p-never-nonce",
- "pinocchio",
- "solana-account",
- "solana-address",
- "solana-instruction",
- "solana-keypair",
- "solana-message",
- "solana-nonce",
- "solana-pubkey",
- "solana-rent",
- "solana-sdk-ids",
- "solana-signer",
- "solana-system-interface",
- "solana-transaction",
- "solana-transaction-error",
-]
-
-[[package]]
 name = "feature-probe"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1690,6 +1667,29 @@ dependencies = [
  "libc",
  "wasi 0.11.1+wasi-snapshot-preview1",
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "nonce-guard-program"
+version = "0.1.0"
+dependencies = [
+ "borsh 1.5.7",
+ "litesvm",
+ "p-never-nonce",
+ "pinocchio",
+ "solana-account",
+ "solana-address",
+ "solana-instruction",
+ "solana-keypair",
+ "solana-message",
+ "solana-nonce",
+ "solana-pubkey",
+ "solana-rent",
+ "solana-sdk-ids",
+ "solana-signer",
+ "solana-system-interface",
+ "solana-transaction",
+ "solana-transaction-error",
 ]
 
 [[package]]

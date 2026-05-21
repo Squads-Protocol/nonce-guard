@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use borsh::to_vec;
-use external_signature_program::{
+use nonce_guard_program::{
     errors::NonceGuardError,
     instructions::{CompiledInstruction, ExecuteGuardedInstructionArgs},
     utils::SmallVec,
@@ -148,7 +148,7 @@ fn program_path() -> PathBuf {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("target")
         .join("deploy")
-        .join("external_signature_program.so");
+        .join("nonce_guard_program.so");
 
     assert!(
         path.exists(),

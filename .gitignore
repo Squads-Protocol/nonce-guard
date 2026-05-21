@@ -17,6 +17,7 @@ target/
 #.idea/
 
 .DS_Store
+.secrets/
 
 # Node
 node_modules/
