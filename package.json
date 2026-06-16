@@ -1,6 +1,7 @@
 {
   "name": "nonce-guard",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.34.3",
   "description": "",
   "main": "index.js",
   "scripts": {

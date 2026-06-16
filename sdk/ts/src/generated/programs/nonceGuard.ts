@@ -24,14 +24,14 @@ import {
 import { findGuardedAccountPda } from "../pdas";
 
 export const NONCE_GUARD_PROGRAM_ADDRESS =
-  "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN" as Address<"ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN">;
+  "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw" as Address<"guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw">;
 
 export enum NonceGuardInstruction {
   ExecuteGuarded,
 }
 
 export type ParsedNonceGuardInstruction<
-  TProgram extends string = "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN",
+  TProgram extends string = "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw",
 > = {
   instructionType: NonceGuardInstruction.ExecuteGuarded;
 } & ParsedExecuteGuardedInstruction<TProgram>;

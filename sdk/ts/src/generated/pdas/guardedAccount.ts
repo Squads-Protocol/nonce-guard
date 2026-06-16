@@ -23,7 +23,7 @@ export async function findGuardedAccountPda(
   config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN" as Address<"ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN">,
+    programAddress = "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw" as Address<"guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw">,
   } = config;
   return await getProgramDerivedAddress({
     programAddress,

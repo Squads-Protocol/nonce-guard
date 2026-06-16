@@ -8,4 +8,4 @@
 use solana_address::{address, Address};
 
 /// `nonce_guard` program ID.
-pub const NONCE_GUARD_ID: Address = address!("ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN");
+pub const NONCE_GUARD_ID: Address = address!("guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw");

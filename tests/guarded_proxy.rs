@@ -21,7 +21,7 @@ use solana_system_interface::instruction::{advance_nonce_account, create_nonce_a
 use solana_transaction::Transaction;
 use solana_transaction_error::TransactionError;
 
-const PROGRAM_ID: Pubkey = pubkey!("ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN");
+const PROGRAM_ID: Pubkey = pubkey!("guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw");
 const GUARDED_ACCOUNT_SEED: &[u8] = b"guarded_proxy";
 const TRANSFER_LAMPORTS: u64 = 250_000;
 

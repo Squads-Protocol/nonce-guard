@@ -33,7 +33,7 @@ const rustClientsDir = path.join(__dirname, "..", "sdk", "rust");
 const root = rootNode(
   programNode({
     name: "nonceGuard",
-    publicKey: "ExtSgUPtP3JyKUysFw2S5fpL5fWfUPzGUQLd2bTwftXN",
+    publicKey: "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw",
     version: "0.1.0",
     accounts: [],
     pdas: [
