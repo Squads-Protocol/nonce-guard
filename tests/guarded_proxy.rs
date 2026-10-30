@@ -23,7 +23,7 @@ use solana_transaction_error::TransactionError;
 
 const PROGRAM_ID: Pubkey = pubkey!("guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw");
 const GUARDED_ACCOUNT_SEED: &[u8] = b"guarded_proxy";
-const TRANSFER_LAMPORTS: u64 = 250_000;
+const TRANSFER_LAMPORTS: u64 = 1_000_000;
 
 #[test]
 fn executes_system_transfer_without_durable_nonce() {
@@ -59,10 +59,10 @@ fn executes_system_transfer_without_durable_nonce() {
 
     svm.send_transaction(tx).unwrap();
 
-    let guarded_account = svm.get_account(&guarded_pda).unwrap();
+    let guarded_lamports = svm.get_account(&guarded_pda).map_or(0, |account| account.lamports);
     let recipient_account = svm.get_account(&recipient).unwrap();
 
-    assert_eq!(guarded_account.lamports, 0);
+    assert_eq!(guarded_lamports, 0);
     assert_eq!(recipient_account.lamports, TRANSFER_LAMPORTS);
 }
 
