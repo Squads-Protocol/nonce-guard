@@ -11,20 +11,26 @@ import {
   getProgramDerivedAddress,
   getUtf8Encoder,
   type Address,
+  type HasAddress,
   type ProgramDerivedAddress,
 } from "@solana/kit";
 
 export type GuardedAccountSeeds = {
-  owner: Address;
+  owner: Address | HasAddress;
 };
 
 export async function findGuardedAccountPda(
   seeds: GuardedAccountSeeds,
-  config: { programAddress?: Address | undefined } = {},
+  config: { programAddress?: Address | HasAddress | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
   const {
-    programAddress = "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw" as Address<"guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw">,
+    programAddress:
+      programAddressInput = "guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw" as Address<"guardgkc38afzaHQ7LNAtWHKgdUAAwyayhNdY8MPNnw">,
   } = config;
+  const programAddress =
+    typeof programAddressInput === "string"
+      ? programAddressInput
+      : programAddressInput.address;
   return await getProgramDerivedAddress({
     programAddress,
     seeds: [

@@ -28,12 +28,15 @@ import {
   type ReadonlyAccount,
   type ReadonlySignerAccount,
   type ReadonlyUint8Array,
-  type TransactionSigner,
   type WritableAccount,
 } from "@solana/kit";
 import {
   getAccountMetaFactory,
+  type InstructionAccountInput,
+  type InstructionAccountInputAddress,
+  type InstructionSignerInput,
   type ResolvedInstructionAccount,
+  type ResolvedInstructionAccountMeta,
 } from "@solana/program-client-core";
 import { NONCE_GUARD_PROGRAM_ADDRESS } from "../programs";
 import {
@@ -111,23 +114,25 @@ export function getExecuteGuardedInstructionDataCodec(): Codec<
 }
 
 export type ExecuteGuardedInput<
-  TAccountOwner extends string = string,
-  TAccountGuardedAccount extends string = string,
-  TAccountInstructionsSysvar extends string = string,
+  TAccountOwner extends InstructionSignerInput = InstructionSignerInput,
+  TAccountGuardedAccount extends InstructionAccountInput =
+    InstructionAccountInput,
+  TAccountInstructionsSysvar extends InstructionAccountInput =
+    InstructionAccountInput,
 > = {
   /** Owner of the guarded PDA. Must be a signer. */
-  owner: TransactionSigner<TAccountOwner>;
+  owner: TAccountOwner;
   /** Guarded PDA derived from the owner. Signs all proxied CPIs. */
-  guardedAccount: Address<TAccountGuardedAccount>;
+  guardedAccount: TAccountGuardedAccount;
   /** Instructions sysvar, used to check for durable nonce usage. */
-  instructionsSysvar?: Address<TAccountInstructionsSysvar>;
+  instructionsSysvar?: TAccountInstructionsSysvar;
   instructions: ExecuteGuardedInstructionDataArgs["instructions"];
 };
 
 export function getExecuteGuardedInstruction<
-  TAccountOwner extends string,
-  TAccountGuardedAccount extends string,
-  TAccountInstructionsSysvar extends string,
+  TAccountOwner extends InstructionSignerInput,
+  TAccountGuardedAccount extends InstructionAccountInput,
+  TAccountInstructionsSysvar extends InstructionAccountInput,
   TProgramAddress extends Address = typeof NONCE_GUARD_PROGRAM_ADDRESS,
 >(
   input: ExecuteGuardedInput<
@@ -135,22 +140,46 @@ export function getExecuteGuardedInstruction<
     TAccountGuardedAccount,
     TAccountInstructionsSysvar
   >,
-  config?: { programAddress?: TProgramAddress },
+  config?: {
+    programAddress?: TProgramAddress | { readonly address: TProgramAddress };
+  },
 ): ExecuteGuardedInstruction<
   TProgramAddress,
-  TAccountOwner,
-  TAccountGuardedAccount,
-  TAccountInstructionsSysvar
+  ResolvedInstructionAccountMeta<
+    TAccountOwner,
+    InstructionAccountInputAddress<TAccountOwner>
+  >,
+  ResolvedInstructionAccountMeta<
+    TAccountGuardedAccount,
+    InstructionAccountInputAddress<TAccountGuardedAccount>
+  >,
+  ResolvedInstructionAccountMeta<
+    TAccountInstructionsSysvar,
+    InstructionAccountInputAddress<TAccountInstructionsSysvar>
+  >
 > {
   // Program address.
-  const programAddress = config?.programAddress ?? NONCE_GUARD_PROGRAM_ADDRESS;
+  const programAddressInput =
+    config?.programAddress ?? NONCE_GUARD_PROGRAM_ADDRESS;
+  const programAddress =
+    typeof programAddressInput === "string"
+      ? programAddressInput
+      : programAddressInput.address;
+
+  // Account meta helper.
+  const getAccountMeta = getAccountMetaFactory(programAddress, "omitted");
 
   // Original accounts.
   const originalAccounts = {
-    owner: { value: input.owner ?? null, isWritable: false },
-    guardedAccount: { value: input.guardedAccount ?? null, isWritable: true },
+    owner: { value: input.owner ?? null, isSigner: true, isWritable: false },
+    guardedAccount: {
+      value: input.guardedAccount ?? null,
+      isSigner: false,
+      isWritable: true,
+    },
     instructionsSysvar: {
       value: input.instructionsSysvar ?? null,
+      isSigner: false,
       isWritable: false,
     },
   };
@@ -168,7 +197,6 @@ export function getExecuteGuardedInstruction<
       "Sysvar1nstructions1111111111111111111111111" as Address<"Sysvar1nstructions1111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "omitted");
   return Object.freeze({
     accounts: [
       getAccountMeta("owner", accounts.owner),
@@ -181,9 +209,18 @@ export function getExecuteGuardedInstruction<
     programAddress,
   } as ExecuteGuardedInstruction<
     TProgramAddress,
-    TAccountOwner,
-    TAccountGuardedAccount,
-    TAccountInstructionsSysvar
+    ResolvedInstructionAccountMeta<
+      TAccountOwner,
+      InstructionAccountInputAddress<TAccountOwner>
+    >,
+    ResolvedInstructionAccountMeta<
+      TAccountGuardedAccount,
+      InstructionAccountInputAddress<TAccountGuardedAccount>
+    >,
+    ResolvedInstructionAccountMeta<
+      TAccountInstructionsSysvar,
+      InstructionAccountInputAddress<TAccountInstructionsSysvar>
+    >
   >);
 }
 

@@ -11,6 +11,8 @@ import {
   type Address,
   type ClientWithTransactionPlanning,
   type ClientWithTransactionSending,
+  type ExtendedClient,
+  type HasAddress,
 } from "@solana/kit";
 import {
   addSelfPlanAndSendFunctions,
@@ -44,6 +46,7 @@ export type NonceGuardPlugin = {
 export type NonceGuardPluginInstructions = {
   executeGuarded: (
     input: ExecuteGuardedInput,
+    config?: { programAddress?: Address | HasAddress },
   ) => ReturnType<typeof getExecuteGuardedInstruction> &
     SelfPlanAndSendFunctions;
 };
@@ -55,20 +58,31 @@ export type NonceGuardPluginPdas = {
 export type NonceGuardPluginRequirements = ClientWithTransactionPlanning &
   ClientWithTransactionSending;
 
-export function nonceGuardProgram() {
+export function nonceGuardProgram(
+  config: { programAddress?: Address | HasAddress } = {},
+) {
   return <T extends NonceGuardPluginRequirements>(
     client: T,
-  ): Omit<T, "nonceGuard"> & { nonceGuard: NonceGuardPlugin } => {
+  ): ExtendedClient<T, { nonceGuard: NonceGuardPlugin }> => {
     return extendClient(client, {
       nonceGuard: <NonceGuardPlugin>{
         instructions: {
-          executeGuarded: (input) =>
+          executeGuarded: (input, instructionConfig) =>
             addSelfPlanAndSendFunctions(
               client,
-              getExecuteGuardedInstruction(input),
+              getExecuteGuardedInstruction(input, {
+                programAddress:
+                  instructionConfig?.programAddress ?? config.programAddress,
+              }),
             ),
         },
-        pdas: { guardedAccount: findGuardedAccountPda },
+        pdas: {
+          guardedAccount: (seeds, pdaConfig) =>
+            findGuardedAccountPda(seeds, {
+              programAddress:
+                pdaConfig?.programAddress ?? config.programAddress,
+            }),
+        },
       },
     });
   };
